@@ -3,12 +3,13 @@
     "builds": [
       {
         "src": "server.js",
-        "use": "@vercel/node"
+        "use": "@now/node"
       }
     ],
     "headers": [
       {
-        "source": "/(.*)",
+        "src": "/(.*)",
+        "dest":"server.js",
         "headers": [
           { "key": "Access-Control-Allow-Origin", "value": "https://pdf-uploader-client-8lof.vercel.app" },
           { "key": "Access-Control-Allow-Credentials", "value": "true" }
