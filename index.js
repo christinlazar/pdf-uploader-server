@@ -25,6 +25,10 @@ app.get('/',(req,res)=>{
     res.send("hi")
 })
 
+app.post("/test",(req,res)=>{
+    res.status(201).json("POST REQUEST ACCEPTED")
+})
+
 app.post('/upload',upload.single('pdf'),async (req,res)=>{
     try {
         if(!req.file){
