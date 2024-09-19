@@ -23,7 +23,7 @@ app.use(cors({
 app.options('*', cors());
 
 app.get('/',()=>{
-    res.json("hi")
+    res.send("hi")
 })
 
 app.post('/upload',upload.single('pdf'),async (req,res)=>{
