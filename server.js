@@ -10,7 +10,7 @@ const PORT = 5000
 app.use(bodyParser.json())
 app.use(express.urlencoded({extended:true}))
 app.use(cors({
-    origin: "https://pdf-uploader-client-8lof.vercel.app",
+    origin: ["https://pdf-uploader-client-8lof.vercel.app"],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
