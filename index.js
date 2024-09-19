@@ -41,33 +41,38 @@ app.post('/upload',upload.single('pdf'),async (req,res)=>{
     }
 })
 
-app.post('/extract',upload.single('pdf'),async (req,res)=>{
-   const filePath = path.join(__dirname, req.file.path)
-    const pagesToExtract = JSON.parse(req.body.pages)
+app.post('/extract', upload.single('pdf'), async (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No file uploaded' });
+    }
+  
+    const pagesToExtract = JSON.parse(req.body.pages);
+    
     try {
-        const pdfBytes = fs.readFileSync(filePath)
-        const pdfDoc = await PDFDocument.load(pdfBytes)
-        const newDoc = await PDFDocument.create()
-        for(let page of pagesToExtract){
-            const[copiedPage] = await newDoc.copyPages(pdfDoc,[page - 1])
-            newDoc.addPage(copiedPage)
-        }
-        const newPdfBytes = await newDoc.save()
-        res.set({
-            'Content-Type': 'application/pdf',
-            'Content-Disposition': 'attachment; filename="extracted.pdf"',
-          });
-      
-          res.send(Buffer.from(newPdfBytes));
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({ success: false, message: error.message });
-    }finally {
-        fs.unlink(filePath, (err) => {
-          if (err) console.error('Error deleting file:', err);
-        });
+      // Get the PDF buffer directly from memory
+      const pdfBytes = req.file.buffer;
+      const pdfDoc = await PDFDocument.load(pdfBytes);
+      const newDoc = await PDFDocument.create();
+  
+      for (let page of pagesToExtract) {
+        const [copiedPage] = await newDoc.copyPages(pdfDoc, [page - 1]);
+        newDoc.addPage(copiedPage);
       }
-})
+  
+      const newPdfBytes = await newDoc.save();
+  
+      res.set({
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': 'attachment; filename="extracted.pdf"',
+      });
+  
+      res.send(Buffer.from(newPdfBytes));
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, message: error.message });
+    }
+  });
+  
 
 app.listen(PORT,()=>{
     console.log( `server is running on port ${PORT}` )
